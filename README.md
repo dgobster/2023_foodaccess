@@ -28,11 +28,10 @@
     * Restaurants, food retailers/ foodservice operations 
     * Places offering bus passes, gas cards
     * Foodshare rates/ layers, census data for food insecurity
+    * Transportation routes
+    * Food distribution flows- if data available
     
     Symbology – pantry/ food retailer capacity to give/receive donations; proportionally symboled with annual donation quantities (eg annual report data)
-    Foodshare rates/ layers, census data for food insecurity
-    Transportation routes
-    Food distribution flows- if data available
     Form fill ins
     Searching by services provided
     Menu selection
