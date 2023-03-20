@@ -20,18 +20,21 @@
     Potential point locations
     * Farms, food pantries/ banks, farmers markets, compost dropoff locations
         * Amounts of visitors/ consumers at food banks
-    ** Quantity/ type of product served
-    * Additional delivery etc services provided
-    * Add service ranges
-    * Places accepting online ordering, food assistance 
-    * Free breakfasts/lunches at schools
+        * Quantity/ type of product served
+        * Additional delivery etc services provided
+        * Add service ranges
+        * Places accepting online ordering, food assistance 
+        * Free breakfasts/lunches at schools
     * Restaurants, food retailers/ foodservice operations 
     * Places offering bus passes, gas cards
     * Foodshare rates/ layers, census data for food insecurity
     * Transportation routes
     * Food distribution flows- if data available
     
-    * Symbology – pantry/ food retailer capacity to give/receive donations; proportionally symboled with annual donation quantities (eg annual report data)
+    Potential Symbology 
+    * pantry/ food retailer capacity to give/receive donations; proportionally symboled with annual donation quantities (eg annual report data)
+    
+    Potential Operator Functions
     * Form fill ins
     * Searching by services provided
     * Menu selection
