@@ -31,10 +31,10 @@
     * Transportation routes
     * Food distribution flows- if data available
     
-    Symbology – pantry/ food retailer capacity to give/receive donations; proportionally symboled with annual donation quantities (eg annual report data)
-    Form fill ins
-    Searching by services provided
-    Menu selection
+    * Symbology – pantry/ food retailer capacity to give/receive donations; proportionally symboled with annual donation quantities (eg annual report data)
+    * Form fill ins
+    * Searching by services provided
+    * Menu selection
 
 
 3. Wireframes
