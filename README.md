@@ -1,6 +1,7 @@
 # Team Name
 
 ### Team Members
+* Delaney Gobster
 
 ### Final Proposal
 1. Persona/Scenario
