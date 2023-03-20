@@ -2,6 +2,7 @@
 
 ### Team Members
 * Delaney Gobster
+* Nuzhat T Nawshin
 
 ### Final Proposal
 1. Persona/Scenario
