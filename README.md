@@ -19,7 +19,7 @@
 
     Potential point locations
     * Farms, food pantries/ banks, farmers markets, compost dropoff locations
-    * Amounts of visitors/ consumers at food banks
+        * Amounts of visitors/ consumers at food banks
     * Quantity/ type of product served
     * Additional delivery etc services provided
     * Add service ranges
