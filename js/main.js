@@ -5,9 +5,9 @@ var map;
 function createMap() {
     //create the map
     map = L.map('map', {
-        center: [43.416993, -89.948362
+        center: [43.0722, -89.4008
         ],
-        zoom: 8
+        zoom: 10
     });
 
     //add OSM base tilelayer
@@ -21,3 +21,18 @@ function createMap() {
     getData(map);
 };
 
+
+//function to retrieve the data and place it on the map
+function getData(map) {
+    //load the data
+    fetch("data/data_final.geojson")
+        .then(function (response) {
+            return response.json();
+        })
+        //create a Leaflet GeoJSON layer and add it to the map
+        .then(function (json) {
+            L.geoJson(json).addTo(map);
+        })
+};
+
+document.addEventListener('DOMContentLoaded', createMap)
