@@ -4,3 +4,10 @@
     display: inline-block;
     border: solid #446666 2px;
 }
+
+
+#sidebar {
+    padding: 24px;
+    font-family: monospace;
+    float: right;
+}
