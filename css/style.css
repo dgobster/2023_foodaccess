@@ -13,14 +13,13 @@
     border: solid #446666 2px;
 }
 
-<<<<<<< HEAD
-
 #sidebar {
     padding: 24px;
     font-family: monospace;
     float: right;
+    display: none;
 }
-=======
+
 .dropdown-check-list {
     display: inline-block;
 }
@@ -71,5 +70,4 @@
 
 .dropdown-check-list.visible .items {
     display: block;
->>>>>>> fd32ec39905863f3a33027e0213b737d74566b0e
 }
