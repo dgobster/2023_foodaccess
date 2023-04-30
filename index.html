@@ -1,35 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width">
-            <title></title>
 
-        <!--put your external stylesheet links here-->
-        <link rel="stylesheet" href="lib/leaflet/leaflet.css">
-        <link rel="stylesheet" href="lib/leaflet-sidebar-master/src/L.Control.Sidebar.css">
-        <link rel="stylesheet" href="css/style.css">
-        <!--[if IE<9]>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title></title>
+
+    <!--put your external stylesheet links here-->
+    <link rel="stylesheet" href="lib/leaflet/leaflet.css">
+    <link rel="stylesheet" href="lib/leaflet-sidebar-master/src/L.Control.Sidebar.css">
+    <link rel="stylesheet" href="css/style.css">
+    <!--[if IE<9]>
             <link rel="stylesheet" href="css/style.ie.css">
         <![endif]-->
 
-         <!--you can also place internal styles here;
+    <!--you can also place internal styles here;
              place these within <style> tags-->
-        
-    </head>
+</head>
 
-    <body>
-        <!--put your initial page content here-->
-        <div id="sidebar"><h1>leaflet-sidebar</h1></div>
-        <div id="map"></div>
+<body>
+    <!--put your initial page content here-->
+    <div id="sidebar">
+        <h1>leaflet-sidebar</h1>
+    </div>
 
-        <!--you can also use this space for internal scripts;
+    <div id="panel">
+        <div id="list_services" class="dropdown-check-list" tabindex="100">
+            <span class="anchor">Services</span>
+            <ul class="items">
+                <li><input type="checkbox" value="accepts_snap" />Accepts SNAP</li>
+                <li><input type="checkbox" value="accepts_wic" />Accepts WIC</li>
+                <li><input type="checkbox" value="community_meals" />Community Meals</li>
+                <li><input type="checkbox" value="delivery_available" />Delivery Available</li>
+                <li><input type="checkbox" value="emergency_food_needs" />Emergency Food Needs</li>
+            </ul>
+        </div>
+
+        <br>
+
+        <div id="list_providers" class="dropdown-check-list" tabindex="100">
+            <span class="anchor">Providers</span>
+            <ul class="items">
+                <li><input type="checkbox" value="farms_producers_markets" />Farms, Producers, Markets </li>
+                <li><input type="checkbox" value="food_bank_pantry" />Food Bank/Pantry</li>
+                <li><input type="checkbox" value="business_org" />Organization/Business </li>
+                <li><input type="checkbox" value="restaurant_bakery" />Restaurant/Bakery </li>
+                <li><input type="checkbox" value="retail" />Retail</li>
+                <li><input type="checkbox" value="schools_childcare" />Schools/Childcare</li>
+                <li><input type="checkbox" value="shelters" />Shelters</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="map"></div>
+
+    <!--you can also use this space for internal scripts;
         place these within <script> tags-->
 
-        <!--put your external script links here-->
-        <script type="text/javascript" src="lib/leaflet/leaflet-src.js"></script>
-        <script type="text/javascript" src="lib/leaflet-sidebar-master/src/L.Control.Sidebar.js"></script>
-        <script type="text/javascript" src="js/main.js"></script>
-        <script type="text/javascript" src="lib/jquery-3.5.1.js"></script>
-    </body>
+    <!--put your external script links here-->
+    <script type="text/javascript" src="lib/leaflet/leaflet-src.js"></script>
+    <script type="text/javascript" src="lib/leaflet-sidebar-master/src/L.Control.Sidebar.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="lib/jquery-3.5.1.js"></script>
+</body>
+
 </html>
