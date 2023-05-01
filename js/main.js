@@ -159,7 +159,7 @@ function createFilterUI() {
 
 };
 
-//creates the filters under the provider section
+//creates the filters under the provider menu
 function filterProviderData(json, value) {
     console.log(value);
     var markers = L.geoJson(json, { filter: providerFilter });
@@ -181,7 +181,7 @@ function filterProviderData(json, value) {
     return markers;
 }
 
-//creates the filters under the service section
+//creates the filters under the service menu
 function filterServiceData(json, value) {
     console.log(value);
     var markers = L.geoJson(json, { filter: serviceFilter });
