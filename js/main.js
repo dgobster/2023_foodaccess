@@ -1,6 +1,7 @@
 //declare global variables
 var map;
 var filterLayers = {};
+var currentLayer;
 
 //function to instantiate the Leaflet map
 function createMap() {
@@ -23,78 +24,90 @@ function createMap() {
     getData();
 };
 
-function filterData(markers, json, map, value, type) {
+function intersecLayers(currentLayer, newLayer) {
+    var commonMarkers = [];
 
-    if (type === 'service') {
-        markers = L.geoJson(json, { filter: serviceFilter }).addTo(map);
-    }
-    else {
-        markers = L.geoJson(json, { filter: providerFilter }).addTo(map);
-    }
-
-    function serviceFilter(feature) {
-        if (feature.properties['Source'].toLowerCase().includes(value) || feature.properties['Location_Services'].toLowerCase().includes(value)) return true
-    }
-
-    function providerFilter(feature) {
-        if (value.constructor === Array) {
-            if (feature.properties['Organization Type'] in value) {
-                console.log(feature.properties['Organization Type'])
-                return true
+    newLayer.eachLayer(function (layer1Obj) {
+        var matches = 0;
+        var layer1Coords = layer1Obj.feature.geometry.coordinates;
+        currentLayer.eachLayer(function (layer2Obj) {
+            var layer2Coords = layer2Obj.feature.geometry.coordinates;
+            if (layer1Coords[0] == layer2Coords[0] && layer1Coords[1] == layer2Coords[1]) {
+                matches = matches + 1;
+                /*
+                if(matches > 1){
+                    console.log(" ")
+                    console.log(layer1Coords);
+                    console.log(layer2Coords);
+                    console.log(" ")
+                }
+                */
+                console.log("True");
+                commonMarkers.push(layer1Obj.toGeoJSON());
             }
-        }
-        else {
-            if (feature.properties['Organization Type'] === value) {
-                console.log(feature.properties['Organization Type'])
-                return true
-            }
-        }
-    }
-};
+        });
+    });
 
+    return L.geoJSON(commonMarkers);
+}
+
+//chosses the layers based on the selected filters
 function applyFilters(checkedValues) {
-    for (var i = 0; i < checkedValues.length; i++) {
-        var value  = checkedValues[i]
+    currentLayer = filterLayers['all'];
 
+    for (var i = 0; i < checkedValues.length; i++) {
+        var value = checkedValues[i]
+        console.log(value)
         switch (value) {
             case 'accepts_snap':
+                currentLayer = intersecLayers(currentLayer, filterLayers['accepts_snap']);
                 break;
 
             case 'accepts_wic':
+                currentLayer = intersecLayers(currentLayer, filterLayers['accepts_wic']);
                 break;
 
             case 'community_meals':
+                currentLayer = intersecLayers(currentLayer, filterLayers['community_meals']);
                 break;
 
             case 'delivery_available':
+                currentLayer = intersecLayers(currentLayer, filterLayers['delivery_available']);
                 break;
 
             case 'emergency_food_needs':
+                currentLayer = intersecLayers(currentLayer, filterLayers['emergency_food_needs']);
                 break;
 
-            case 'farms_producers_markets': filterLayers['farms_producers_markets'].addTo(map);
+            case 'farms_producers_markets':
+                currentLayer = intersecLayers(currentLayer, filterLayers['farms_producers_markets']);
                 break;
 
-            case 'food_bank_pantry': filterLayers['food_bank_pantry'].addTo(map);
+            case 'food_bank_pantry':
+                currentLayer = intersecLayers(currentLayer, filterLayers['food_bank_pantry']);
                 break;
 
-            case 'business_org': filterLayers['business_org'].addTo(map);
+            case 'business_org':
+                currentLayer = intersecLayers(currentLayer, filterLayers['business_org']);
                 break;
 
-            case 'restaurant_bakery': filterLayers['restaurant_bakery'].addTo(map);
+            case 'restaurant_bakery':
+                currentLayer = intersecLayers(currentLayer, filterLayers['restaurant_bakery']);
                 break;
 
-            case 'retail': filterLayers['retail'].addTo(map);
+            case 'retail':
+                currentLayer = intersecLayers(currentLayer, filterLayers['retail']);
                 break;
 
-            case 'schools_childcare': filterLayers['schools_childcare'].addTo(map);
+            case 'schools_childcare':
+                currentLayer = intersecLayers(currentLayer, filterLayers['schools_childcare']);
                 break;
 
             case 'shelters': //filterLayers['shelters'].addTo(map);
                 break;
         }
-        
     }
+    currentLayer.addTo(map);
 };
 
 function createFilterUI() {
@@ -116,16 +129,14 @@ function createFilterUI() {
             checkList_providers.classList.add('visible');
     }
 
-    
+
     //Check which boxes are checked
     var checkboxes = document.querySelectorAll("input[type=checkbox]");
     for (var i = 0; i < checkboxes.length; i++) {
         checkboxes[i].addEventListener('change', function () {
 
             // remove all the layers
-            for(layer in filterLayers){
-                map.removeLayer(filterLayers[layer]);
-            }
+            map.removeLayer(currentLayer);
 
             // make an array of the checked boxes
             var checkedValues = [];
@@ -140,34 +151,68 @@ function createFilterUI() {
                 applyFilters(checkedValues)
             }
             else {
-                filterLayers['all'].addTo(map);
+                currentLayer = filterLayers['all'].addTo(map);
             }
         });
     }
 
 };
 
+//creates the filters under the provider section
 function filterProviderData(json, value) {
-    var markers = L.geoJson(json, { filter: providerFilter })
+    console.log(value);
+    var markers = L.geoJson(json, { filter: providerFilter });
     function providerFilter(feature) {
         if (Array.isArray(value)) {
             if (value.includes(feature.properties['Organization Type'])) {
+                console.log("True");
                 return true;
             }
         }
         else {
             if (feature.properties['Organization Type'] === value) {
+                console.log("True");
                 return true;
             }
         }
     }
 
-    return markers
+    return markers;
 }
 
+//creates the filters under the service section
+function filterServiceData(json, value) {
+    console.log(value);
+    var markers = L.geoJson(json, { filter: serviceFilter });
+    function serviceFilter(feature) {
+        if (value === "snap") {
+            if ((feature.properties['Source'] === "USDA SNAP") || (feature.properties['Location_Services'].toLowerCase().includes(" snap"))) {
+                console.log("True");
+                return true;
+            }
+        }
+        else {
+            if (feature.properties['Location_Services'].toLowerCase().includes(value)) {
+                console.log("True");
+                return true;
+            }
+        }
+    }
+
+    return markers;
+}
+
+//creates all the layers based on the filters
 function createLayers(json) {
-    //layers based on the different filters
+    //layer containing all the markers
     filterLayers['all'] = L.geoJson(json);
+
+    //layers for service filters
+    filterLayers['accepts_snap'] = filterServiceData(json, "snap");
+    filterLayers['accepts_wic'] = filterServiceData(json, " wic");
+    filterLayers['community_meals'] = filterServiceData(json, "community meal");
+    filterLayers['delivery_available'] = filterServiceData(json, "delivery");
+    filterLayers['emergency_food_needs'] = filterServiceData(json, "emergency");
 
     //layers for provider filters
     filterLayers['farms_producers_markets'] = filterProviderData(json, ["Community Garden", "Farm/Producer", "Farmers' Market"]);
@@ -188,8 +233,10 @@ function getData() {
         })
         //create a Leaflet GeoJSON layer and add it to the map
         .then(function (json) {
+            //create the different layers based on the filters
             createLayers(json)
-            filterLayers['all'].addTo(map);
+            currentLayer = filterLayers['all'].addTo(map);
+            console.log("Filter");
             createFilterUI();
         })
 };
