@@ -13,6 +13,13 @@
     border: solid #446666 2px;
 }
 
+#sidebar {
+    padding: 24px;
+    font-family: monospace;
+    float: right;
+    display: none;
+}
+
 .dropdown-check-list {
     display: inline-block;
 }

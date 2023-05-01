@@ -1,5 +1,6 @@
 //declare global variables
 var map;
+var sidebar;
 var filterLayers = {};
 var currentLayer;
 

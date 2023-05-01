@@ -38,10 +38,3 @@ User Case Scenario-3: Upon arriving at the interactive, Janet needs to select wh
 
 * Mobile Views
 <img width="592" alt="Screenshot 2023-04-12 082418" src="https://user-images.githubusercontent.com/123594521/231471569-1b3680d6-fa94-409f-a583-3f6cad6a0945.png">
-
-
-
-
-
-
-
