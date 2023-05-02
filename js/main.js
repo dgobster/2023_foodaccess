@@ -111,28 +111,25 @@ function createLegend() {
 
     legend.addTo(map);
 }
-function intersecLayers(currentLayer, newLayer) {
+
+// find the common markers between the current layer and the newly selected layer
+function intersectLayers(currentLayer, newLayer) {
     var commonMarkers = [];
 
     newLayer.eachLayer(function (layer1Obj) {
-        var matches = 0;
+        var layer1OrgName = layer1Obj.feature.properties["Organization Name"];
         var layer1Coords = layer1Obj.feature.geometry.coordinates;
+
         currentLayer.eachLayer(function (layer2Obj) {
+            var layer2OrgName = layer2Obj.feature.properties["Organization Name"];
             var layer2Coords = layer2Obj.feature.geometry.coordinates;
-            if (layer1Coords[0] == layer2Coords[0] && layer1Coords[1] == layer2Coords[1]) {
-                matches = matches + 1;
-                /*
-                if(matches > 1){
-                    console.log(" ")
-                    console.log(layer1Coords);
-                    console.log(layer2Coords);
-                    console.log(" ")
-                }
-                */
-                console.log("True");
+
+            //match the coordinates and the organization name
+            if (layer1Coords[0] == layer2Coords[0] && layer1Coords[1] == layer2Coords[1] && layer1OrgName === layer2OrgName) {
                 commonMarkers.push(layer1Obj.toGeoJSON());
             }
         });
+
     });
 
     return L.geoJSON(commonMarkers);
@@ -144,53 +141,53 @@ function applyFilters(checkedValues) {
 
     for (var i = 0; i < checkedValues.length; i++) {
         var value = checkedValues[i]
-        console.log(value)
         switch (value) {
             case 'accepts_snap':
-                currentLayer = intersecLayers(currentLayer, filterLayers['accepts_snap']);
+                currentLayer = intersectLayers(currentLayer, filterLayers['accepts_snap']);
                 break;
 
             case 'accepts_wic':
-                currentLayer = intersecLayers(currentLayer, filterLayers['accepts_wic']);
+                currentLayer = intersectLayers(currentLayer, filterLayers['accepts_wic']);
                 break;
 
             case 'community_meals':
-                currentLayer = intersecLayers(currentLayer, filterLayers['community_meals']);
+                currentLayer = intersectLayers(currentLayer, filterLayers['community_meals']);
                 break;
 
             case 'delivery_available':
-                currentLayer = intersecLayers(currentLayer, filterLayers['delivery_available']);
+                currentLayer = intersectLayers(currentLayer, filterLayers['delivery_available']);
                 break;
 
             case 'emergency_food_needs':
-                currentLayer = intersecLayers(currentLayer, filterLayers['emergency_food_needs']);
+                currentLayer = intersectLayers(currentLayer, filterLayers['emergency_food_needs']);
                 break;
 
             case 'farms_producers_markets':
-                currentLayer = intersecLayers(currentLayer, filterLayers['farms_producers_markets']);
+                currentLayer = intersectLayers(currentLayer, filterLayers['farms_producers_markets']);
                 break;
 
             case 'food_bank_pantry':
-                currentLayer = intersecLayers(currentLayer, filterLayers['food_bank_pantry']);
+                currentLayer = intersectLayers(currentLayer, filterLayers['food_bank_pantry']);
                 break;
 
             case 'business_org':
-                currentLayer = intersecLayers(currentLayer, filterLayers['business_org']);
+                currentLayer = intersectLayers(currentLayer, filterLayers['business_org']);
                 break;
 
             case 'restaurant_bakery':
-                currentLayer = intersecLayers(currentLayer, filterLayers['restaurant_bakery']);
+                currentLayer = intersectLayers(currentLayer, filterLayers['restaurant_bakery']);
                 break;
 
             case 'retail':
-                currentLayer = intersecLayers(currentLayer, filterLayers['retail']);
+                currentLayer = intersectLayers(currentLayer, filterLayers['retail']);
                 break;
 
             case 'schools_childcare':
-                currentLayer = intersecLayers(currentLayer, filterLayers['schools_childcare']);
+                currentLayer = intersectLayers(currentLayer, filterLayers['schools_childcare']);
                 break;
 
-            case 'shelters': //filterLayers['shelters'].addTo(map);
+            case 'shelters':
+                currentLayer = intersectLayers(currentLayer, filterLayers['shelters']);
                 break;
         }
     }
@@ -228,64 +225,48 @@ function createFilterUI() {
             // make an array of the checked boxes
             var checkedValues = [];
             for (var j = 0; j < checkboxes.length; j++) {
-                if (checkboxes[j].checked) {
+                if (checkboxes[j].checked)
                     checkedValues.push(checkboxes[j].value);
-                }
             }
 
             //select filters based on the checked boxes and apply them
-            if (checkedValues.length > 0) {
+            if (checkedValues.length > 0)
                 applyFilters(checkedValues)
-            }
-            else {
+            else
                 currentLayer = filterLayers['all'].addTo(map);
-            }
         });
     }
-
 };
 
 //creates the filters under the provider menu
 function filterProviderData(json, value) {
-    console.log(value);
     var markers = L.geoJson(json, { filter: providerFilter });
     function providerFilter(feature) {
         if (Array.isArray(value)) {
-            if (value.includes(feature.properties['Organization Type'])) {
-                console.log("True");
+            if (value.includes(feature.properties['Organization Type']))
                 return true;
-            }
         }
         else {
-            if (feature.properties['Organization Type'] === value) {
-                console.log("True");
+            if (feature.properties['Organization Type'] === value)
                 return true;
-            }
         }
     }
-
     return markers;
 }
 
 //creates the filters under the service menu
 function filterServiceData(json, value) {
-    console.log(value);
     var markers = L.geoJson(json, { filter: serviceFilter });
     function serviceFilter(feature) {
         if (value === "snap") {
-            if ((feature.properties['Source'] === "USDA SNAP") || (feature.properties['Location_Services'].toLowerCase().includes(" snap"))) {
-                console.log("True");
+            if ((feature.properties['Source'] === "USDA SNAP") || (feature.properties['Location_Services'].toLowerCase().includes(" snap")))
                 return true;
-            }
         }
         else {
-            if (feature.properties['Location_Services'].toLowerCase().includes(value)) {
-                console.log("True");
+            if (feature.properties['Location_Services'].toLowerCase().includes(value))
                 return true;
-            }
         }
     }
-
     return markers;
 }
 
@@ -308,6 +289,7 @@ function createLayers(json) {
     filterLayers['restaurant_bakery'] = filterProviderData(json, "Restaurant/Bakery");
     filterLayers['retail'] = filterProviderData(json, "Retail");
     filterLayers['schools_childcare'] = filterProviderData(json, "School district nutrition program");
+    filterLayers['shelters'] = filterProviderData(json, "Shelters");
 }
 
 //function to retrieve the data and place it on the map
@@ -322,7 +304,6 @@ function getData() {
             //create the different layers based on the filters
             createLayers(json)
             currentLayer = filterLayers['all'].addTo(map);
-            console.log("Filter");
             createFilterUI();
         })
 };
