@@ -1,7 +1,8 @@
 //declare global variables
 var map;
-var sidebar;
 var filterLayers = {};
+var info;
+var legend;
 
 //function to instantiate the Leaflet map
 function createMap() {
@@ -16,7 +17,6 @@ function createMap() {
         {
             maxZoom: 20,
             opacity: .65,
-            // attribution: '&copy; OpenStreetMap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }
     ).addTo(map);
 
@@ -24,47 +24,93 @@ function createMap() {
     getData();
 };
 
-function createSidebar() {
-    //create sidebar control and add to map
-    var sidebar = L.control.sidebar('sidebar', {
-        closeButton: true,
-        position: 'right'
-        //see source code if autopan isn't recognized
-        //autoPan: true
-    });
-    map.addControl(sidebar);
+//create custom control for info panel
+function customControl() {
+    var info = L.control();
 
-    //add if want sidebar visible on startup
-    /*setTimeout(function () {
-      sidebar.show();
-     }, 500); */
+    info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+        this.update();
+        return this._div;
+    };
 
-    //once sidebar functional, revise marker code to apply to data points on map 
-    /*var marker = L.marker([51.2, 7]).addTo(map).on('click', function () {
-        sidebar.toggle();
-    });*/
+    // method to update the control based on feature properties passed; alter to attributes for dataset from eg
+    info.update = function (props) {
+        this._div.innerHTML = '<h4>Location Information</h4>' + (props ?
+            '<b>' + props.name + '</b><br />' + props.density + ' people / mi<sup>2</sup>'
+            : 'Click on Location');
+    };
 
-    //sidebar visibility controls
-    map.on('click', function () {
-        sidebar.hide();
-    })
-
-    //sidebar will be visible
-    sidebar.on('show', function () {
-    });
-    //sidebar is visible
-    sidebar.on('shown', function () {
-    });
-    //sidebar will be hidden
-    sidebar.on('hide', function () {
-    });
-    //sidebar is hidden
-    sidebar.on('hidden', function () {
-    });
-    //sidebar close on click
-    L.DomEvent.on(sidebar.getCloseButton(), 'click', function () {
-    });
+    info.addTo(map);
 };
+
+
+//highlight point on mouseover; see if want highlight with point feature; move/delete styling
+function highlightFeature(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+        weight: 5,
+        color: '#666',
+        dashArray: '',
+        fillOpacity: 0.7
+    });
+    //bring layer to front
+    layer.bringToFront();
+
+    //update results panel with current marker info
+    info.update(layer.feature.properties);
+
+}
+//reset highlight on mouseout; need to define geojson varibale before listeners and assign to layer; check w current code
+function resetHighlight(e) {
+    geojson.resetStyle(e.target);
+
+    info.update();
+}
+
+//click listener zooms to point
+function zoomToFeature(e) {
+    map.fitBounds(e.target.getBounds());
+}
+//listeners for highlight
+function onEachFeature(feature, layer) {
+    layer.on({
+        mouseover: highlightFeature,
+        mouseout: resetHighlight,
+        click: zoomToFeature
+    });
+}
+//style later, change to provider layer
+/*geojson = L.geoJson(json, {
+    style: style,
+    onEachFeature: onEachFeature
+}).addTo(map);
+*/
+
+//create legend with provider types, update to appropriate
+function createLegend() {
+    var legend = L.control({ position: 'bottomright' });
+
+    legend.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'info legend'),
+            grades = [0, 10, 20, 50, 100, 200, 500, 1000],
+            labels = [];
+
+        // loop through our density intervals and generate a label with a colored square for each interval
+        for (var i = 0; i < grades.length; i++) {
+            div.innerHTML +=
+                '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        }
+
+        return div;
+    };
+
+    legend.addTo(map);
+}
+
 
 function filterData(markers, json, map, value, type) {
 
@@ -97,7 +143,7 @@ function filterData(markers, json, map, value, type) {
 
 function applyFilters(checkedValues) {
     for (var i = 0; i < checkedValues.length; i++) {
-        var value  = checkedValues[i]
+        var value = checkedValues[i]
 
         switch (value) {
             case 'accepts_snap':
@@ -136,7 +182,7 @@ function applyFilters(checkedValues) {
             case 'shelters': //filterLayers['shelters'].addTo(map);
                 break;
         }
-        
+
     }
 };
 
@@ -159,14 +205,14 @@ function createFilterUI() {
             checkList_providers.classList.add('visible');
     }
 
-    
+
     //Check which boxes are checked
     var checkboxes = document.querySelectorAll("input[type=checkbox]");
     for (var i = 0; i < checkboxes.length; i++) {
         checkboxes[i].addEventListener('change', function () {
 
             // remove all the layers
-            for(layer in filterLayers){
+            for (layer in filterLayers) {
                 map.removeLayer(filterLayers[layer]);
             }
 
@@ -220,7 +266,6 @@ function createLayers(json) {
     filterLayers['retail'] = filterProviderData(json, "Retail");
     filterLayers['schools_childcare'] = filterProviderData(json, "School district nutrition program");
 }
-
 
 //function to retrieve the data and place it on the map
 function getData() {
