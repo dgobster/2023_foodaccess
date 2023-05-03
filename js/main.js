@@ -40,10 +40,10 @@ function customControl() {
     info.update = function (props) {
         this._div.innerHTML = '<h4>Location Information</h4>' + (props ?
             '<b>' + 'Location Name:' + '</b><br/>' + props.Organization_Name + '<br/>' +
-            '<b>' + 'Address:' + '</b><br/>' + props.Location_Address + '<br/>' + 
-            '<b>' + 'Email Address:' + '</b><br/>' + props.Email + '<br/>' + 
+            '<b>' + 'Address:' + '</b><br/>' + props.Location_Address + '<br/>' +
+            '<b>' + 'Email Address:' + '</b><br/>' + props.Email + '<br/>' +
             '<b>' + 'Phone Number:' + '</b><br/>' + props.Phone + '<br/>' +
-            '<b>' + 'Website:' + '</b><br/>' + props.Website + '<br/>' +
+            '<b>' + 'Website:' + '</b><br/><a href=' + props.Website + '>' + props.Website + '</a><br/>' +
             '<b>' + 'Location Services:' + '</b><br/>' + props.Location_Services + '<br/>' +
             '<b>' + 'Listing Updated:' + '</b><br/>' + props.Updated + '<br/>'
 
@@ -99,13 +99,13 @@ function onEachFeature(feature, layer) {
 */
 function getColor(d) {
     return d > 1000 ? '#800026' :
-           d > 500  ? '#BD0026' :
-           d > 200  ? '#E31A1C' :
-           d > 100  ? '#FC4E2A' :
-           d > 50   ? '#FD8D3C' :
-           d > 20   ? '#FEB24C' :
-           d > 10   ? '#FED976' :
-                      '#FFEDA0';
+        d > 500 ? '#BD0026' :
+            d > 200 ? '#E31A1C' :
+                d > 100 ? '#FC4E2A' :
+                    d > 50 ? '#FD8D3C' :
+                        d > 20 ? '#FEB24C' :
+                            d > 10 ? '#FED976' :
+                                '#FFEDA0';
 }
 //create legend with provider types, update to appropriate
 function createLegend() {
@@ -149,8 +149,22 @@ function intersectLayers(currentLayer, newLayer) {
         });
 
     });
+    //ADD STYLE HERE ONLY
+    //pointtolayer HERE; also move highlight code here potentially
 
-    return L.geoJSON(commonMarkers);
+    return L.geoJSON(commonMarkers, {
+        onEachFeature: function (feature, layer) {
+            layer.on({
+                click: function (e) {
+                    console.log("filter provider layer function")
+                    var lat = e.target._latlng.lat,
+                        lon = e.target._latlng.lon;
+                    map.flyTo(e.target._latlng, 14)
+                    info.update(layer.feature.properties)
+                }
+            })
+        }
+    });
 };
 
 //chosses the layers based on the selected filters
@@ -236,7 +250,7 @@ function createFilterUI() {
     var checkboxes = document.querySelectorAll("input[type=checkbox]");
     for (var i = 0; i < checkboxes.length; i++) {
         checkboxes[i].addEventListener('change', function () {
-
+            info.update();
             // remove all the layers
             map.removeLayer(currentLayer);
 
@@ -258,16 +272,20 @@ function createFilterUI() {
 
 //creates the filters under the provider menu
 function filterProviderData(json, value) {
-    var markers = L.geoJson(json, { 
+    var markers = L.geoJson(json, {
         filter: providerFilter,
-        onEachFeature:function(feature,layer){
+        onEachFeature: function (feature, layer) {
             layer.on({
-                click:function(e){
-                    console.log("sup")
+                click: function (e) {
+                    console.log("filter provider layer function")
+                    var lat = e.target._latlng.lat,
+                        lon = e.target._latlng.lon;
+                    map.flyTo(e.target._latlng, 14)
+                    info.update(layer.feature.properties)
                 }
             })
         }
-    
+
     });
     function providerFilter(feature) {
         if (Array.isArray(value)) {
@@ -284,15 +302,20 @@ function filterProviderData(json, value) {
 
 //creates the filters under the service menu
 function filterServiceData(json, value) {
-    var markers = L.geoJson(json, { 
-        filter: serviceFilter ,
-        onEachFeature:function(feature,layer){
-            layer.on({
-                click:function(e){
-                }
-            })
+    var markers = L.geoJson(json, {
+        filter: serviceFilter,
+        onEachFeature: function (feature, layer) {
+            /* layer.on({
+                 click:function(e){
+                     console.log("filter service layer function")
+                     var lat = e.target._latlng.lat,
+                         lon =e.target._latlng.lon;
+                     map.flyTo(e.target._latlng,14)
+                     info.update(layer.feature.properties)
+                 }
+             })*/
         }
-    
+
     });
     function serviceFilter(feature) {
         if (value === "snap") {
@@ -306,22 +329,22 @@ function filterServiceData(json, value) {
     }
     return markers;
 }
-
+//HERE back up location for styling all provider layers at once, may not need
 //creates all the layers based on the filters
 function createLayers(json) {
     //layer containing all the markers
     filterLayers['all'] = L.geoJson(json, {
-        onEachFeature:function(feature,layer){
+        onEachFeature: function (feature, layer) {
             layer.on({
-                click:function(e){
+                click: function (e) {
+                    console.log("create layer function")
                     var lat = e.target._latlng.lat,
-                        lon =e.target._latlng.lon;
-                    map.flyTo(e.target._latlng,14)
+                        lon = e.target._latlng.lon;
+                    map.flyTo(e.target._latlng, 14)
                     info.update(layer.feature.properties)
                 }
             })
         }
-        //pointtolayer HERE; also move highlight code here potentially
     });
 
     //layers for service filters
