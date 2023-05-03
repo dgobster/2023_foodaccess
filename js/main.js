@@ -1,9 +1,9 @@
 //declare global variables
 var map;
 var filterLayers = {};
-var info;
-var legend;
 var currentLayer;
+var info = L.control();
+
 
 //function to instantiate the Leaflet map
 function createMap() {
@@ -23,11 +23,12 @@ function createMap() {
 
     //call getData function
     getData();
+    customControl();
+    createLegend();
 };
 
 //create custom control for info panel
 function customControl() {
-    var info = L.control();
 
     info.onAdd = function (map) {
         this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
@@ -38,7 +39,15 @@ function customControl() {
     // method to update the control based on feature properties passed; alter to attributes for dataset from eg
     info.update = function (props) {
         this._div.innerHTML = '<h4>Location Information</h4>' + (props ?
-            '<b>' + props.name + '</b><br />' + props.density + ' people / mi<sup>2</sup>'
+            '<b>' + 'Location Name:' + '</b><br/>' + props.Organization_Name + '<br/>' +
+            '<b>' + 'Address:' + '</b><br/>' + props.Location_Address + '<br/>' + 
+            '<b>' + 'Email Address:' + '</b><br/>' + props.Email + '<br/>' + 
+            '<b>' + 'Phone Number:' + '</b><br/>' + props.Phone + '<br/>' +
+            '<b>' + 'Website:' + '</b><br/>' + props.Website + '<br/>' +
+            '<b>' + 'Location Services:' + '</b><br/>' + props.Location_Services + '<br/>' +
+            '<b>' + 'Listing Updated:' + '</b><br/>' + props.Updated + '<br/>'
+
+
             : 'Click on Location');
     };
 
@@ -88,7 +97,16 @@ function onEachFeature(feature, layer) {
     onEachFeature: onEachFeature
 }).addTo(map);
 */
-
+function getColor(d) {
+    return d > 1000 ? '#800026' :
+           d > 500  ? '#BD0026' :
+           d > 200  ? '#E31A1C' :
+           d > 100  ? '#FC4E2A' :
+           d > 50   ? '#FD8D3C' :
+           d > 20   ? '#FEB24C' :
+           d > 10   ? '#FED976' :
+                      '#FFEDA0';
+}
 //create legend with provider types, update to appropriate
 function createLegend() {
     var legend = L.control({ position: 'bottomright' });
@@ -117,11 +135,11 @@ function intersectLayers(currentLayer, newLayer) {
     var commonMarkers = [];
 
     newLayer.eachLayer(function (layer1Obj) {
-        var layer1OrgName = layer1Obj.feature.properties["Organization Name"];
+        var layer1OrgName = layer1Obj.feature.properties["Organization_Name"];
         var layer1Coords = layer1Obj.feature.geometry.coordinates;
 
         currentLayer.eachLayer(function (layer2Obj) {
-            var layer2OrgName = layer2Obj.feature.properties["Organization Name"];
+            var layer2OrgName = layer2Obj.feature.properties["Organization_Name"];
             var layer2Coords = layer2Obj.feature.geometry.coordinates;
 
             //match the coordinates and the organization name
@@ -133,7 +151,7 @@ function intersectLayers(currentLayer, newLayer) {
     });
 
     return L.geoJSON(commonMarkers);
-}
+};
 
 //chosses the layers based on the selected filters
 function applyFilters(checkedValues) {
@@ -240,14 +258,24 @@ function createFilterUI() {
 
 //creates the filters under the provider menu
 function filterProviderData(json, value) {
-    var markers = L.geoJson(json, { filter: providerFilter });
+    var markers = L.geoJson(json, { 
+        filter: providerFilter,
+        onEachFeature:function(feature,layer){
+            layer.on({
+                click:function(e){
+                    console.log("sup")
+                }
+            })
+        }
+    
+    });
     function providerFilter(feature) {
         if (Array.isArray(value)) {
-            if (value.includes(feature.properties['Organization Type']))
+            if (value.includes(feature.properties['Provider']))
                 return true;
         }
         else {
-            if (feature.properties['Organization Type'] === value)
+            if (feature.properties['Provider'] === value)
                 return true;
         }
     }
@@ -256,7 +284,16 @@ function filterProviderData(json, value) {
 
 //creates the filters under the service menu
 function filterServiceData(json, value) {
-    var markers = L.geoJson(json, { filter: serviceFilter });
+    var markers = L.geoJson(json, { 
+        filter: serviceFilter ,
+        onEachFeature:function(feature,layer){
+            layer.on({
+                click:function(e){
+                }
+            })
+        }
+    
+    });
     function serviceFilter(feature) {
         if (value === "snap") {
             if ((feature.properties['Source'] === "USDA SNAP") || (feature.properties['Location_Services'].toLowerCase().includes(" snap")))
@@ -273,7 +310,19 @@ function filterServiceData(json, value) {
 //creates all the layers based on the filters
 function createLayers(json) {
     //layer containing all the markers
-    filterLayers['all'] = L.geoJson(json);
+    filterLayers['all'] = L.geoJson(json, {
+        onEachFeature:function(feature,layer){
+            layer.on({
+                click:function(e){
+                    var lat = e.target._latlng.lat,
+                        lon =e.target._latlng.lon;
+                    map.flyTo(e.target._latlng,14)
+                    info.update(layer.feature.properties)
+                }
+            })
+        }
+        //pointtolayer HERE; also move highlight code here potentially
+    });
 
     //layers for service filters
     filterLayers['accepts_snap'] = filterServiceData(json, "snap");
