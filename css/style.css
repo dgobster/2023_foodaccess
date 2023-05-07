@@ -1,13 +1,13 @@
 #panel {
     width: 15%;
-    height: 800px;
+    height: 750px;
     float: left;
     background-color: #A9D1AC;
     border: solid #A9D1AC 2px;
 }
 
 #map {
-    height: 800px;
+    height: 750px;
     width: 84%;
     display: inline-block;
     border: solid #446666 2px;
