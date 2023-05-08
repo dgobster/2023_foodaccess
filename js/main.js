@@ -115,14 +115,13 @@ function onEachFeature(feature, layer) {
 }).addTo(map);
 */
 function getColor(d) {
-    return d > 1000 ? '#800026' :
-        d > 500 ? '#BD0026' :
-            d > 200 ? '#E31A1C' :
-                d > 100 ? '#FC4E2A' :
-                    d > 50 ? '#FD8D3C' :
-                        d > 20 ? '#FEB24C' :
-                            d > 10 ? '#FED976' :
-                                '#FFEDA0';
+    return d == "Farms/producers/markets" ? '#4c9e9e' :
+        d == "Food bank/pantry" ? '#e699c2' :
+            d == "Organization/business" ? '#9463a8' :
+                d == "Restaurant/bakery" ? '#f9f07d' :
+                    d == "Retail" ? '#78bbdd' :
+                        d == "School/childcare" ? '#f47f72':
+                        '#FEB24C';
 }
 //create legend with provider types, update to appropriate
 function createLegend() {
@@ -131,14 +130,14 @@ function createLegend() {
     legend.onAdd = function (map) {
 
         var div = L.DomUtil.create('div', 'info legend'),
-            grades = [0, 10, 20, 50, 100, 200, 500, 1000],
+            grades = ["Farms/producers/markets", "Food bank/pantry", "Organization/business", "Restaurant/bakery", "Retail", "School/childcare"],
             labels = [];
 
         // loop through our density intervals and generate a label with a colored square for each interval
         for (var i = 0; i < grades.length; i++) {
             div.innerHTML +=
-                '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
-                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+                '<i style="background:' + getColor(grades[i]) + '"></i> ' +
+                grades[i] + (grades[i] ? '<br>' : '+');
         }
 
         return div;
