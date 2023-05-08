@@ -10,8 +10,25 @@ function createMap() {
     //create the map
     map = L.map('map', {
         center: [43.0722, -89.4008],
-        zoom: 10
+        zoom: 10,
+        zoomsliderControl:true,
+        zoomControl: false
     });
+
+    
+        var control = new L.Control({position:'topleft'});
+        control.onAdd = function(map) {
+                var azoom = L.DomUtil.create('a','resetzoom');
+                azoom.innerHTML = "[Reset Zoom]";
+                L.DomEvent
+                    .disableClickPropagation(azoom)
+                    .addListener(azoom, 'click', function() {
+                        map.setView(map.options.center, map.options.zoom);
+                    },azoom);
+                return azoom;
+            };
+   
+    control.addTo(map);
 
     //add OSM base tilelayer
     L.tileLayer('https://api.mapbox.com/styles/v1/ntnawshin/clgvju9mb00eo01pad09z1f5v/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibnRuYXdzaGluIiwiYSI6ImNsYThjZzB4MjAyZXY0MHBlcHNrZHd6YmUifQ.wrjSJbaNvwf48Hu-xk2vNg',
