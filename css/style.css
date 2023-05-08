@@ -1,3 +1,6 @@
+.resetzoom:hover{
+    cursor:pointer;
+}
 #panel {
     width: 15%;
     height: 750px;
