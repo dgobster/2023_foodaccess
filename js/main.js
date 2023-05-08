@@ -71,16 +71,6 @@ function customControl() {
     info.addTo(map);
 };
 
-//PopupContent constructor function
-function PopupContent(properties, attribute) {
-    this.properties = properties;
-    this.attribute = attribute;
-    this.year = attribute.split("rate")[1];
-    this.population = this.properties[attribute];
-    this.formatted = "<p><b>County:</b> " + this.properties.County + "</p><p><b>Food Share Population Rate in 20" + this.year + ":</b> " + this.population + " %</p>";
-};
-
-
 //highlight point on mouseover; see if want highlight with point feature; move/delete styling
 function highlightFeature(e) {
     var layer = e.target;
