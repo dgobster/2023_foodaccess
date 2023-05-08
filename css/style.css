@@ -1,17 +1,62 @@
+#navbar{
+    position: relative;
+    width:99.25%;
+    height:140px;
+    background-color: #238b45;
+    border: solid #446666 2px;
+}
+
+.icon1{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width:140px;
+    height: 140px;
+    margin:auto;
+    display:block;
+}
+
+.icon2{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width:140px;
+    height: 140px;
+    margin:auto;
+    display:block;
+}
+
+#navbar > h1{
+    text-align:center;
+    color:#ccece6;
+}
+
+#navbar > p{
+    text-align: center;
+    font-size: 14px;
+    padding: 1px;
+    color:#99d8c9;
+    width:75%;
+    margin:auto;
+
+}
+
+
+
 .resetzoom:hover{
     cursor:pointer;
 }
 #panel {
-    width: 15%;
-    height: 750px;
+    width: 17%;
+    height: calc(100vh - 165px);
     float: left;
     background-color: #A9D1AC;
-    border: solid #A9D1AC 2px;
+    border: solid #446666 2px;
 }
 
 #map {
-    height: 750px;
-    width: 84%;
+    height: calc(100vh - 165px);
+    width: 82%;
     display: inline-block;
     border: solid #446666 2px;
 }
@@ -66,6 +111,10 @@
 
 .dropdown-check-list.visible .items {
     display: block;
+}
+
+.help {
+    font: 10px/12px Arial, Helvetica, sans-serif;
 }
 
 .info {
