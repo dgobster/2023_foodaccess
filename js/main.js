@@ -19,7 +19,7 @@ function createMap() {
     var control = new L.Control({ position: 'topleft' });
     control.onAdd = function (map) {
         var azoom = L.DomUtil.create('a', 'resetzoom');
-        azoom.innerHTML = "[Reset Zoom]";
+        azoom.innerHTML = "Reset Zoom";
         L.DomEvent
             .disableClickPropagation(azoom)
             .addListener(azoom, 'click', function () {
@@ -37,6 +37,7 @@ function createMap() {
             opacity: .65,
         }
     ).addTo(map);
+    
 
     //call getData function
     getData();
