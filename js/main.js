@@ -29,22 +29,22 @@ function createMap() {
 
 //create custom control for info panel
 function customControl() {
-
     info.onAdd = function (map) {
-        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+        this._div = L.DomUtil.create('div', 'info');
+        this._div.style.overflowY = 'auto'; // Enable vertical scrolling
         this.update();
         return this._div;
     };
+
 
     // method to update the control based on feature properties passed; alter to attributes for dataset from eg
     info.update = function (props) {
         this._div.innerHTML = '<h4>Location Information</h4>' + (props ?
             '<b>' + 'Location Name:' + '</b><br/>' + props.Organization_Name + '<br/>' +
-            '<b>' + 'Address:' + '</b><br/>' + props.Location_Address + '<br/>' +
+            '<b>' + 'Address:' + '</b><br/><a href=' + props.Location_Directions +' target="_blank">' + props.Location_Address + '</a><br/>' +
             '<b>' + 'Email Address:' + '</b><br/>' + props.Email + '<br/>' +
             '<b>' + 'Phone Number:' + '</b><br/>' + props.Phone + '<br/>' +
-            '<b>' + 'Website:' + '</b><br/><a href=' + props.Website + '>' + props.Website + '</a><br/>' +
-            '<b>' + 'Location Services:' + '</b><br/>' + props.Location_Services + '<br/>' +
+            '<b>' + 'Website:' + '</b><br/>' + (props.Website === 'Information unavailable' || props.Website === 'In Location Services, if listed' ? props.Website : '<a href=' + props.Website + ' target="_blank">' + props.Website + '</a>') + '<br/>' +
             '<b>' + 'Listing Updated:' + '</b><br/>' + props.Updated + '<br/>'
 
 
@@ -52,6 +52,15 @@ function customControl() {
     };
 
     info.addTo(map);
+};
+
+//PopupContent constructor function
+function PopupContent(properties, attribute) {
+    this.properties = properties;
+    this.attribute = attribute;
+    this.year = attribute.split("rate")[1];
+    this.population = this.properties[attribute];
+    this.formatted = "<p><b>County:</b> " + this.properties.County + "</p><p><b>Food Share Population Rate in 20" + this.year + ":</b> " + this.population + " %</p>";
 };
 
 
