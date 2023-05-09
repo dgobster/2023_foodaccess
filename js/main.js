@@ -62,11 +62,21 @@ function customControl() {
             '<b>' + 'Email Address:' + '</b><br/>' + props.Email + '<br/>' +
             '<b>' + 'Phone Number:' + '</b><br/>' + props.Phone + '<br/>' +
             '<b>' + 'Website:' + '</b><br/>' + (props.Website === 'Information unavailable' || props.Website === 'In Location Services, if listed' ? props.Website : '<a href=' + props.Website + ' target="_blank">' + props.Website + '</a>') + '<br/>' +
+            '<b>' + 'Location Services:' + '</b><br/>' + props.Location_Services + '<br/>' +
             '<b>' + 'Listing Updated:' + '</b><br/>' + props.Updated + '<br/>'
 
 
             : 'Click on a point for more information');
     };
+
+    document.addEventListener('click', function(event) {
+        var infoDiv = document.querySelector('.info');
+        var pointElement = event.target.closest('.point');
+  
+       /* if (!pointElement) {
+          infoDiv.innerHTML = "Click on a point for more information";
+        }*/
+    });
 
     info.addTo(map);
 };
