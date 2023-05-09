@@ -37,7 +37,7 @@ function createMap() {
             opacity: .65,
         }
     ).addTo(map);
-    
+
 
     //call getData function
     getData();
@@ -115,39 +115,39 @@ function onEachFeature(feature, layer) {
     onEachFeature: onEachFeature
 }).addTo(map);
 */
+
 function getColor(d) {
     return d == "Farms/producers/markets" ? '#4c9e9e' :
         d == "Food bank/pantry" ? '#e699c2' :
             d == "Organization/business" ? '#9463a8' :
                 d == "Restaurant/bakery" ? '#f9f07d' :
                     d == "Retail" ? '#78bbdd' :
-                        d == "School/childcare" ? '#f47f72':
-                        '#FEB24C';
+                        d == "School/childcare" ? '#f47f72' :
+                            '#FEB24C';
 }
+
 //create legend with provider types, update to appropriate
 function createLegend() {
     var legend = L.control({ position: 'bottomright' });
 
     legend.onAdd = function (map) {
 
-        var div = L.DomUtil.create('div', 'info legend'),
-            grades = ["Farms/producers/markets", "Food bank/pantry", "Organization/business", "Restaurant/bakery", "Retail", "School/childcare"],
-            labels = [];
+        var div = L.DomUtil.create('div', 'info legend');
+        var grades = ["Farms/producers/markets", "Food bank/pantry", "Organization/business", "Restaurant/bakery", "Retail", "School/childcare"];
 
-        // loop through our density intervals and generate a label with a colored square for each interval
+        // loop through our prioviders and generate a label with a colored square for each interval
         for (var i = 0; i < grades.length; i++) {
             div.innerHTML +=
                 '<i style="background:' + getColor(grades[i]) + '"></i> ' +
                 grades[i] + (grades[i] ? '<br>' : '+');
         }
-
         return div;
     };
 
     legend.addTo(map);
 }
 
-function colorMarkers(layer) {
+function addMarkerProperties(layer) {
     var markers = [];
     var updatedLayer;
 
@@ -197,14 +197,14 @@ function colorMarkers(layer) {
 }
 
 // find the common markers between the current layer and the newly selected layer
-function intersectLayers(serviceLayer, providerLayer) {
+function intersectLayers(layer1, layer2) {
     var commonMarkers = [];
 
-    serviceLayer.eachLayer(function (layer1Obj) {
+    layer1.eachLayer(function (layer1Obj) {
         var layer1OrgName = layer1Obj.feature.properties["Organization_Name"];
         var layer1Coords = layer1Obj.feature.geometry.coordinates;
 
-        providerLayer.eachLayer(function (layer2Obj) {
+        layer2.eachLayer(function (layer2Obj) {
             var layer2OrgName = layer2Obj.feature.properties["Organization_Name"];
             var layer2Coords = layer2Obj.feature.geometry.coordinates;
 
@@ -222,16 +222,16 @@ function intersectLayers(serviceLayer, providerLayer) {
     return L.geoJSON(commonMarkers);
 };
 
-function uniteLayers(currentLayer, newLayer) {
+function uniteLayers(layer1, layer2) {
     var commonMarkers = [];
 
     // take all the object from the current layer
-    currentLayer.eachLayer(function (layer1Obj) {
+    layer1.eachLayer(function (layer1Obj) {
         commonMarkers.push(layer1Obj.toGeoJSON());
     });
 
     //take only the new objects from the newLayer
-    newLayer.eachLayer(function (layer1Obj) {
+    layer2.eachLayer(function (layer1Obj) {
         var obj = layer1Obj.toGeoJSON();
         var present = false;
 
@@ -254,163 +254,181 @@ function applyFilters(checkedValues) {
     var serviceLayer;
     var providerLayer;
 
+    // create a layer based on common markers among the service filters
     var serviceChecked = false;
     for (var i = 0; i < checkedValues.length; i++) {
         var value = checkedValues[i];
 
         switch (value) {
             case 'accepts_snap':
+                // if this is the first service filter then take all the markers of the filter
+                // else take only the common markers    
                 if (serviceChecked == false) {
                     serviceLayer = filterLayers['accepts_snap'];
                     serviceChecked = true;
-                    console.log("")
                 }
-                else {
-                    serviceLayer = uniteLayers(serviceLayer, filterLayers['accepts_snap'])
-                }
+                else
+                    serviceLayer = intersectLayers(serviceLayer, filterLayers['accepts_snap']);
                 break;
 
             case 'accepts_wic':
+                // if this is the first service filter then take all the markers of the filter
+                // else take only the common markers  
                 if (serviceChecked == false) {
                     serviceLayer = filterLayers['accepts_wic'];
                     serviceChecked = true;
                 }
-                else {
-                    serviceLayer = uniteLayers(serviceLayer, filterLayers['accepts_wic'])
-                }
+                else
+                    serviceLayer = intersectLayers(serviceLayer, filterLayers['accepts_wic']);
                 break;
 
             case 'community_meals':
+                // if this is the first service filter then take all the markers of the filter
+                // else take only the common markers  
                 if (serviceChecked == false) {
                     serviceLayer = filterLayers['community_meals'];
                     serviceChecked = true;
                 }
-                else {
-                    serviceLayer = uniteLayers(serviceLayer, filterLayers['community_meals'])
-                }
+                else
+                    serviceLayer = intersectLayers(serviceLayer, filterLayers['community_meals']);
                 break;
 
             case 'delivery_available':
+                // if this is the first service filter then take all the markers of the filter
+                // else take only the common markers  
                 if (serviceChecked == false) {
                     serviceLayer = filterLayers['delivery_available'];
                     serviceChecked = true;
                 }
-                else {
-                    serviceLayer = uniteLayers(serviceLayer, filterLayers['delivery_available'])
-                }
+                else
+                    serviceLayer = intersectLayers(serviceLayer, filterLayers['delivery_available']);
                 break;
 
             case 'emergency_food_needs':
+                // if this is the first service filter then take all the markers of the filter
+                // else take only the common markers  
                 if (serviceChecked == false) {
                     serviceLayer = filterLayers['emergency_food_needs'];
                     serviceChecked = true;
                 }
-                else {
-                    serviceLayer = uniteLayers(serviceLayer, filterLayers['emergency_food_needs'])
-                }
+                else
+                    serviceLayer = intersectLayers(serviceLayer, filterLayers['emergency_food_needs']);
                 break;
         }
     }
 
+    // create a layer based on all markers among the provider filters
     var providerChecked = false;
     for (var i = 0; i < checkedValues.length; i++) {
         var value = checkedValues[i];
 
         switch (value) {
             case 'farms_producers_markets':
+                // if this is the first provider filter then take all the markers of this filter
+                // else take all the markers from all the provider filters check so far 
                 if (providerChecked == false) {
                     providerLayer = filterLayers['farms_producers_markets'];
                     providerChecked = true;
                 }
-                else {
-                    providerLayer = uniteLayers(providerLayer, filterLayers['farms_producers_markets'])
-                }
+                else
+                    providerLayer = uniteLayers(providerLayer, filterLayers['farms_producers_markets']);
                 break;
 
             case 'food_bank_pantry':
+                // if this is the first provider filter then take all the markers of this filter
+                // else take all the markers from all the provider filters check so far 
                 if (providerChecked == false) {
                     providerLayer = filterLayers['food_bank_pantry'];
                     providerChecked = true;
                 }
-                else {
-                    providerLayer = uniteLayers(providerLayer, filterLayers['food_bank_pantry'])
-                }
+                else
+                    providerLayer = uniteLayers(providerLayer, filterLayers['food_bank_pantry']);
                 break;
 
             case 'business_org':
+                // if this is the first provider filter then take all the markers of this filter
+                // else take all the markers from all the provider filters check so far 
                 if (providerChecked == false) {
                     providerLayer = filterLayers['business_org'];
                     providerChecked = true;
                 }
-                else {
-                    providerLayer = uniteLayers(providerLayer, filterLayers['business_org'])
-                }
+                else
+                    providerLayer = uniteLayers(providerLayer, filterLayers['business_org']);
                 break;
 
             case 'restaurant_bakery':
+                // if this is the first provider filter then take all the markers of this filter
+                // else take all the markers from all the provider filters check so far 
                 if (providerChecked == false) {
                     providerLayer = filterLayers['restaurant_bakery'];
                     providerChecked = true;
                 }
-                else {
-                    providerLayer = uniteLayers(providerLayer, filterLayers['restaurant_bakery'])
-                }
+                else
+                    providerLayer = uniteLayers(providerLayer, filterLayers['restaurant_bakery']);
                 break;
 
             case 'retail':
+                // if this is the first provider filter then take all the markers of this filter
+                // else take all the markers from all the provider filters check so far 
                 if (providerChecked == false) {
                     providerLayer = filterLayers['retail'];
                     providerChecked = true;
                 }
-                else {
-                    providerLayer = uniteLayers(providerLayer, filterLayers['retail'])
-                }
+                else
+                    providerLayer = uniteLayers(providerLayer, filterLayers['retail']);
                 break;
 
             case 'schools_childcare':
+                // if this is the first provider filter then take all the markers of this filter
+                // else take all the markers from all the provider filters check so far 
                 if (providerChecked == false) {
                     providerLayer = filterLayers['schools_childcare'];
                     providerChecked = true;
                 }
-                else {
-                    providerLayer = uniteLayers(providerLayer, filterLayers['schools_childcare'])
-                }
+                else
+                    providerLayer = uniteLayers(providerLayer, filterLayers['schools_childcare']);
                 break;
 
             case 'shelters':
+                // if this is the first provider filter then take all the markers of this filter
+                // else take all the markers from all the provider filters check so far 
                 if (providerChecked == false) {
                     providerLayer = filterLayers['shelters'];
                     providerChecked = true;
                 }
-                else {
-                    providerLayer = uniteLayers(providerLayer, filterLayers['shelters'])
-                }
+                else
+                    providerLayer = uniteLayers(providerLayer, filterLayers['shelters']);
                 break;
         }
 
     }
 
-
+    // if both the service layer and the provider layer are empty
     if (typeof serviceLayer == 'undefined' && typeof providerLayer == 'undefined') {
         return;
     }
+    // if only provider layer is empty because no provider filter was selected then show the service layer markers
     else if (typeof serviceLayer != 'undefined' && typeof providerLayer == 'undefined' && providerChecked == false) {
         currentLayer = serviceLayer;
     }
+    // if only provider layer is empty but provider filter(s) were selected then the common marker set will be empty
     else if (typeof serviceLayer != 'undefined' && typeof providerLayer == 'undefined' && providerChecked == true) {
         return;
     }
+    // if only service layer is empty because on service filter was selected then show the provider layer markers
     else if (typeof serviceLayer == 'undefined' && typeof providerLayer != 'undefined' && serviceChecked == false) {
         currentLayer = providerLayer;
     }
+    // if only service lyaer is empty but service filter(s) were selected then the common marker set will be empty 
     else if (typeof serviceLayer == 'undefined' && typeof providerLayer != 'undefined' && serviceChecked == true) {
         return;
     }
+    // otherwise find the common markers between the two layers
     else {
         currentLayer = intersectLayers(serviceLayer, providerLayer);
     }
 
-    currentLayer = colorMarkers(currentLayer);
+    currentLayer = addMarkerProperties(currentLayer);
     currentLayer.addTo(map);
 };
 
@@ -462,7 +480,7 @@ function createFilterUI() {
             if (checkedValues.length > 0)
                 applyFilters(checkedValues);
             else
-                currentLayer = colorMarkers(filterLayers['all']).addTo(map);
+                currentLayer = addMarkerProperties(filterLayers['all']).addTo(map);
         });
     }
 };
@@ -474,10 +492,12 @@ function filterProviderData(json, value) {
     });
 
     function providerFilter(feature) {
+        // if more than only value needs to be mathced
         if (Array.isArray(value)) {
             if (value.includes(feature.properties['Provider']))
                 return true;
         }
+        // if a single value needs to be matched
         else {
             if (feature.properties['Provider'] === value)
                 return true;
@@ -494,16 +514,18 @@ function filterServiceData(json, value) {
     });
 
     function serviceFilter(feature) {
+        // for 'snap' both the source column and the location service column needs to be checked
         if (value === "snap") {
             if ((feature.properties['Source'] === "USDA SNAP") || (feature.properties['Location_Services'].toLowerCase().includes(" snap")))
                 return true;
         }
+        // for others services only the location services column needs checking
         else {
             if (feature.properties['Location_Services'].toLowerCase().includes(value))
                 return true;
         }
     }
-    
+
     return markers;
 }
 //HERE back up location for styling all provider layers at once, may not need
@@ -540,9 +562,7 @@ function getData() {
         .then(function (json) {
             //create the different layers based on the filters
             createLayers(json)
-            currentLayer = colorMarkers(filterLayers['all']).addTo(map);
-            //old
-            //currentLayer = filterLayers['all'].addTo(map);
+            currentLayer = addMarkerProperties(filterLayers['all']).addTo(map);
         })
 };
 
