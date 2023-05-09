@@ -68,15 +68,15 @@ function customControl() {
 
             : 'Click on a point for more information');
     };
-
-    document.addEventListener('click', function(event) {
+    //reset results panel to a default message when clicking off a point
+    /*document.addEventListener('click', function (event) {
         var infoDiv = document.querySelector('.info');
         var pointElement = event.target.closest('.point');
-  
-       /* if (!pointElement) {
-          infoDiv.innerHTML = "Click on a point for more information";
-        }*/
-    });
+
+        if (!pointElement) {
+            infoDiv.innerHTML = '<h4>Location Information</h4>' + "Click on a point for more information- test";
+        }
+    });*/
 
     info.addTo(map);
 };
@@ -131,19 +131,19 @@ function addMarkerProperties(layer) {
                 case "Community Garden":
                 case "Farm/Producer":
                 case "Farmers' Market":
-                    return L.circleMarker(latlng, { radius: 8, fillColor: "#4c9e9e", color: "#387979", weight: 1, opacity: 1, fillOpacity: 0.8 });
+                    return L.circleMarker(latlng, { radius: 8, fillColor: "#4c9e9e", color: "#387979", weight: 1, opacity: 1, fillOpacity: 0.8 }).bindTooltip("Click for more info");
                 case "Food assistance site":
-                    return L.circleMarker(latlng, { radius: 8, fillColor: "#e699c2", color: "#a86b8f", weight: 1, opacity: 1, fillOpacity: 0.8 });
+                    return L.circleMarker(latlng, { radius: 8, fillColor: "#e699c2", color: "#a86b8f", weight: 1, opacity: 1, fillOpacity: 0.8 }).bindTooltip("Click for more info");
                 case "Business/Organization":
-                    return L.circleMarker(latlng, { radius: 8, fillColor: "#9463a8", color: "#6b437d", weight: 1, opacity: 1, fillOpacity: 0.8 });
+                    return L.circleMarker(latlng, { radius: 8, fillColor: "#9463a8", color: "#6b437d", weight: 1, opacity: 1, fillOpacity: 0.8 }).bindTooltip("Click for more info");
                 case "Restaurant/Bakery":
-                    return L.circleMarker(latlng, { radius: 8, fillColor: "#f9f07d", color: "#a29c5f", weight: 1, opacity: 1, fillOpacity: 0.8 });
+                    return L.circleMarker(latlng, { radius: 8, fillColor: "#f9f07d", color: "#a29c5f", weight: 1, opacity: 1, fillOpacity: 0.8 }).bindTooltip("Click for more info");
                 case "Retail":
-                    return L.circleMarker(latlng, { radius: 8, fillColor: "#78bbdd", color: "#6186a0", weight: 1, opacity: 1, fillOpacity: 0.8 });
+                    return L.circleMarker(latlng, { radius: 8, fillColor: "#78bbdd", color: "#6186a0", weight: 1, opacity: 1, fillOpacity: 0.8 }).bindTooltip("Click for more info");
                 case "School district nutrition program":
-                    return L.circleMarker(latlng, { radius: 8, fillColor: "#f47f72", color: "#b55e55", weight: 1, opacity: 1, fillOpacity: 0.8 });
+                    return L.circleMarker(latlng, { radius: 8, fillColor: "#f47f72", color: "#b55e55", weight: 1, opacity: 1, fillOpacity: 0.8 }).bindTooltip("Click for more info");
                 case "Shelters":
-                    return L.circleMarker(latlng, { radius: 8, fillColor: "#111111", color: "#000", weight: 1, opacity: 1, fillOpacity: 0.8 });
+                    return L.circleMarker(latlng, { radius: 8, fillColor: "#111111", color: "#000", weight: 1, opacity: 1, fillOpacity: 0.8 }).bindTooltip("Click for more info");
             }
         },
 
@@ -163,46 +163,6 @@ function addMarkerProperties(layer) {
 
 
     });
-
-    //highlight point on mouseover; see if want highlight with point feature; move/delete styling
-    function highlightFeature(e) {
-        var layer = e.target;
-
-        // define the highlight style
-        var highlightStyle = {
-            weight: 5,
-            color: '#666',
-            dashArray: '',
-            fillOpacity: 0.7
-        };
-
-        // save the current style so we can reset it later
-        layer.originalStyle = layer.setStyle(highlightStyle).options;
-
-
-        layer.bringToFront();
-
-        //update results panel with current marker info
-        info.update(layer.feature.properties);
-
-    }
-    //reset highlight on mouseout; need to define geojson varibale before listeners and assign to layer; check w current code
-    function resetHighlight(e) {
-        var layer = e.target;
-
-        // restore the original style
-        layer.setStyle(layer.originalStyle);
-
-        info.update();
-    }
-
-    //listeners for highlight
-    function onEachFeature(feature, layer) {
-        layer.on({
-            mouseover: highlightFeature,
-            mouseout: resetHighlight,
-        });
-    }
 
     return updatedLayer;
 }
