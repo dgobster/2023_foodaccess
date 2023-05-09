@@ -15,6 +15,13 @@ function createMap() {
         zoomControl: false
     });
 
+    //add OSM base tilelayer
+    L.tileLayer('https://api.mapbox.com/styles/v1/ntnawshin/clgvju9mb00eo01pad09z1f5v/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibnRuYXdzaGluIiwiYSI6ImNsYThjZzB4MjAyZXY0MHBlcHNrZHd6YmUifQ.wrjSJbaNvwf48Hu-xk2vNg',
+        {
+            maxZoom: 20,
+            opacity: .65,
+        }
+    ).addTo(map);
 
     var control = new L.Control({ position: 'topleft' });
     control.onAdd = function (map) {
@@ -29,15 +36,6 @@ function createMap() {
     };
 
     control.addTo(map);
-
-    //add OSM base tilelayer
-    L.tileLayer('https://api.mapbox.com/styles/v1/ntnawshin/clgvju9mb00eo01pad09z1f5v/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibnRuYXdzaGluIiwiYSI6ImNsYThjZzB4MjAyZXY0MHBlcHNrZHd6YmUifQ.wrjSJbaNvwf48Hu-xk2vNg',
-        {
-            maxZoom: 20,
-            opacity: .65,
-        }
-    ).addTo(map);
-
 
     //call getData function
     getData();
@@ -67,54 +65,13 @@ function customControl() {
             '<b>' + 'Listing Updated:' + '</b><br/>' + props.Updated + '<br/>'
 
 
-            : 'Click on Location');
+            : 'Click on a point for more information');
     };
 
     info.addTo(map);
 };
 
-//highlight point on mouseover; see if want highlight with point feature; move/delete styling
-function highlightFeature(e) {
-    var layer = e.target;
 
-    layer.setStyle({
-        weight: 5,
-        color: '#666',
-        dashArray: '',
-        fillOpacity: 0.7
-    });
-    //bring layer to front
-    layer.bringToFront();
-
-    //update results panel with current marker info
-    info.update(layer.feature.properties);
-
-}
-//reset highlight on mouseout; need to define geojson varibale before listeners and assign to layer; check w current code
-function resetHighlight(e) {
-    geojson.resetStyle(e.target);
-
-    info.update();
-}
-
-//click listener zooms to point
-function zoomToFeature(e) {
-    map.fitBounds(e.target.getBounds());
-}
-//listeners for highlight
-function onEachFeature(feature, layer) {
-    layer.on({
-        mouseover: highlightFeature,
-        mouseout: resetHighlight,
-        click: zoomToFeature
-    });
-}
-//style later, change to provider layer
-/*geojson = L.geoJson(json, {
-    style: style,
-    onEachFeature: onEachFeature
-}).addTo(map);
-*/
 
 function getColor(d) {
     return d == "Farms/producers/markets" ? '#4c9e9e' :
@@ -126,7 +83,7 @@ function getColor(d) {
                             '#FEB24C';
 }
 
-//create legend with provider types, update to appropriate
+//create legend with provider types
 function createLegend() {
     var legend = L.control({ position: 'bottomright' });
 
@@ -150,6 +107,7 @@ function createLegend() {
 function addMarkerProperties(layer) {
     var markers = [];
     var updatedLayer;
+    var layer;
 
     layer.eachLayer(function (layer1Obj) {
         markers.push(layer1Obj.toGeoJSON());
@@ -182,16 +140,59 @@ function addMarkerProperties(layer) {
         onEachFeature: function (feature, layer) {
             layer.on({
                 click: function (e) {
-                    console.log("filter provider layer function")
                     var lat = e.target._latlng.lat,
                         lon = e.target._latlng.lon;
-                    map.flyTo(e.target._latlng, 14)
+                    map.flyTo(e.target._latlng, 14, {
+                        duration: 1,  // custom duration in seconds
+                        easeLinearity: 0,  // custom easing factor (0: linear, 1: ease-in-out)
+                    });
                     info.update(layer.feature.properties)
                 }
             })
         }
 
+
     });
+
+    //highlight point on mouseover; see if want highlight with point feature; move/delete styling
+    function highlightFeature(e) {
+        var layer = e.target;
+
+        // define the highlight style
+        var highlightStyle = {
+            weight: 5,
+            color: '#666',
+            dashArray: '',
+            fillOpacity: 0.7
+        };
+
+        // save the current style so we can reset it later
+        layer.originalStyle = layer.setStyle(highlightStyle).options;
+
+
+        layer.bringToFront();
+
+        //update results panel with current marker info
+        info.update(layer.feature.properties);
+
+    }
+    //reset highlight on mouseout; need to define geojson varibale before listeners and assign to layer; check w current code
+    function resetHighlight(e) {
+        var layer = e.target;
+
+        // restore the original style
+        layer.setStyle(layer.originalStyle);
+
+        info.update();
+    }
+
+    //listeners for highlight
+    function onEachFeature(feature, layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+        });
+    }
 
     return updatedLayer;
 }
@@ -216,8 +217,6 @@ function intersectLayers(layer1, layer2) {
         });
 
     });
-    //ADD STYLE HERE ONLY
-    //pointtolayer HERE; also move highlight code here potentially
 
     return L.geoJSON(commonMarkers);
 };
@@ -249,7 +248,7 @@ function uniteLayers(layer1, layer2) {
     return L.geoJSON(commonMarkers);
 };
 
-//chosses the layers based on the selected filters
+//chooses the layers based on the selected filters
 function applyFilters(checkedValues) {
     var serviceLayer;
     var providerLayer;
@@ -419,7 +418,7 @@ function applyFilters(checkedValues) {
     else if (typeof serviceLayer == 'undefined' && typeof providerLayer != 'undefined' && serviceChecked == false) {
         currentLayer = providerLayer;
     }
-    // if only service lyaer is empty but service filter(s) were selected then the common marker set will be empty 
+    // if only service layer is empty but service filter(s) were selected then the common marker set will be empty 
     else if (typeof serviceLayer == 'undefined' && typeof providerLayer != 'undefined' && serviceChecked == true) {
         return;
     }
