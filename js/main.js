@@ -4,7 +4,6 @@ var filterLayers = {};
 var currentLayer;
 var info = L.control();
 
-
 //function to instantiate the Leaflet map
 function createMap() {
     //create the map
@@ -14,7 +13,6 @@ function createMap() {
         zoomsliderControl: true,
         zoomControl: false
     });
-
 
     var control = new L.Control({ position: 'topleft' });
     control.onAdd = function (map) {
@@ -29,12 +27,13 @@ function createMap() {
     };
 
     control.addTo(map);
-
+    L.control.pan().addTo(map);
     //add OSM base tilelayer
     L.tileLayer('https://api.mapbox.com/styles/v1/ntnawshin/clgvju9mb00eo01pad09z1f5v/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibnRuYXdzaGluIiwiYSI6ImNsYThjZzB4MjAyZXY0MHBlcHNrZHd6YmUifQ.wrjSJbaNvwf48Hu-xk2vNg',
         {
             maxZoom: 20,
             opacity: .65,
+            attribution:`© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>`
         }
     ).addTo(map);
     

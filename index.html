@@ -9,6 +9,7 @@
     <!--put your external stylesheet links here-->
     <link rel="stylesheet" href="lib/leaflet/leaflet.css">
     <link rel="stylesheet" href="lib/L.Control.Zoomslider.css">
+    <link rel="stylesheet" href="lib/L.Control.Pan.css">
     <link rel="stylesheet" href="css/style.css">
     <!--[if IE<9]>
             <link rel="stylesheet" href="css/style.ie.css">
@@ -23,7 +24,7 @@
 
     <div id="navbar">
         <h1>Food Access Locator</h1>
-        <p>Welcome to the Food Access Locator for Dane County! The goal of this webmap is to help connect people with resources. You can use this map to find food services, learn where to donate food, and to find potential partners to collaborate with to make food accessible for everyone! </p> 
+        <p>Welcome to the Food Access Locator for Dane County! The goal of this webmap is to help connect people with resources. You can use this map to find food services, learn where to donate food, and to find potential partners to collaborate with to make food accessible for everyone. </p> 
         <img class="icon1" src="lib/wi_main_circle.png" alt="Transparent image of the state of Wisconsin with a raised fist holding a carrot inside it">
         <img class="icon2" src="lib/wi_main_circle2.png" alt="Transparent image of the state of Wisconsin with a raised fist holding a carrot inside it">
 
@@ -31,7 +32,7 @@
 
     <div id="panel">
         <div id="list_services" class="dropdown-check-list" tabindex="100">
-            <span class="anchor">Services</span>
+            <span class="anchor"><b>Services</b></span>
             <ul class="items">
                 <li><input type="checkbox" value="accepts_snap" />Accepts SNAP</li>
                 <li><input type="checkbox" value="accepts_wic" />Accepts WIC</li>
@@ -44,7 +45,7 @@
         <br>
 
         <div id="list_providers" class="dropdown-check-list" tabindex="100">
-            <span class="anchor">Providers</span>
+            <span class="anchor"><b>Providers</b></span>
             <ul class="items">
                 <li><input type="checkbox" value="farms_producers_markets" />Farms, Producers, Markets </li>
                 <li><input type="checkbox" value="food_bank_pantry" />Food Bank/Pantry</li>
@@ -59,18 +60,48 @@
         <br>
 
         <div id="help" class="dropdown-check-list" tabindex="100">
-            <span class="anchor">Help</span>
+            <span class="anchor"><b>How-To Guide</b></span>
             <ul class="items">
-                <li>The purpose of this map is to help you find resources. 
+                <li>The purpose of this map is to help you find resources.</p> 
                     
-                    Whether you are an idividual who needs to find food for yourself; an individual, group, or company that would like to donate food; or part of an organization that would like to work with other organizations to distribute food; this map is for you. 
+                    <p>Whether you are an <b>individual</b> who needs to find food for yourself, your family, or a friend; an <b>individual, group, or company</b> that would like to donate food; or <b>part of an organization</b> that would like to work with other organizations to distribute food; this map is for you.</p> 
                     
-                    To use this map, open the "Services" and "Providers" tabs by clicking on them. Click on the box(es) that best represent what you are looking for. For example, if you are looking for a store or farmer's market that accepts SNAP, click on the box next to the "Accepts SNAP" service. If you are looking for a food bank or pantry,   </li>
+                    <p>To use this map, open the <b>"Services"</b> and <b>"Providers"</b> tabs by clicking on them. Click on the box(es) that best represent what you are looking for.</p>
+                
+                    <p>For example, if you are looking for a store or farmer's market that accepts <b>SNAP</b> (Supplemental Nutrition Assistance Program - also known as <b>"EBT," "FoodShare," or "Food Stamps"</b>),</b> click on the box next to the "Accepts SNAP" service.</p>
+
+                    <p>If you are looking for a store that accepts <b>WIC</b> (a supplemental nutrition program for Women, Infants, and Children), click on the box next to the "Accepts WIC" service.</p> 
+                        
+                    <p>If you are looking for a food bank or pantry, click on the box next to the "Food Bank/Pantry" service.</p>
+
+                    <p>Once you <b>click</b> on the box(es) of your choice, organizations that meet the requirements of your choices will show up as <b>a dot/dots</b> on the map. </p>
+
+                    <p>Then, when you click on a dot, more information will be available in the box in the <b>"location information"</b> section in the upper righthand side corner of the map. </p>
+
+                    <p>This box will provide <b>as much information as we have</b> about that organization. This may include their mission statement, their phone number, their address, their website, and/or other important information.</p>
+
+                    <p>The <b>legend</b> in the lower right-hand area of the map indicates which type of service is provided.</p>
+
+                    <p>To navigate the map, you have many options. You can use your <b>mouse</b> or <b>touchpad</b> if you wish. </p>
+
+                    <p>However, you can also use the <b>zoom controls</b>. These controls are at the upper-lefthand side of the map and consist of a "+" and a "-" button. The + button zooms in closer, and the - button zooms out. </p>
+
+                    <p>If you want the map to go back to the way it was before you zoomed in or out, you may click on the <b>"Reset Zoom"</b> button underneath these controls. </p>
+
+                    <p>If you want to move the map up, down, or to the left or right without zooming, you can use the "pan" buttons. These buttons have <b>arrows</b> pointing in the direction the map will move if you click on them. </p>
+
+                    <p>The "Reset Zoom" button will also reset the map <b>after</b> you have panned in another direction.</p>
+
+                    <p>This map is not yet finished. For now, if you would like to know more about the data sources for this map, please contact Delaney at <a href="mailto:gobster@wisc.edu">gobster@wisc.edu</a>.</p>
+
+                </li>
             </ul>
         </div>
     </div>
    
-    <div id="map"></div>
+    <div id="map">
+        <a href="http://mapbox.com/about/maps" class='mapbox-logo' target="_blank">Mapbox</a>
+    </div>
 
     <!--you can also use this space for internal scripts;
         place these within <script> tags-->
@@ -78,6 +109,7 @@
     <!--put your external script links here-->
     <script type="text/javascript" src="lib/leaflet/leaflet-src.js"></script>
     <script type="text/javascript" src="lib/L.Control.Zoomslider.js"></script>
+    <script type="text/javascript" src="lib/L.Control.Pan.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
 </body>
 
