@@ -68,15 +68,12 @@ function customControl() {
 
             : 'Click on a point for more information');
     };
-    //reset results panel to a default message when clicking off a point
-    /*document.addEventListener('click', function (event) {
-        var infoDiv = document.querySelector('.info');
-        var pointElement = event.target.closest('.point');
-
-        if (!pointElement) {
-            infoDiv.innerHTML = '<h4>Location Information</h4>' + "Click on a point for more information- test";
+    
+    document.querySelector("body").addEventListener("click", function(e){
+        if (!e.target.classList.contains("point")){
+            info.update()
         }
-    });*/
+    })
 
     info.addTo(map);
 };
@@ -131,19 +128,19 @@ function addMarkerProperties(layer) {
                 case "Community Garden":
                 case "Farm/Producer":
                 case "Farmers' Market":
-                    return L.circleMarker(latlng, { radius: 8, fillColor: "#4c9e9e", color: "#387979", weight: 1, opacity: 1, fillOpacity: 0.8 }).bindTooltip("Click for more info");
+                    return L.circleMarker(latlng, { radius: 8, fillColor: "#4c9e9e", color: "#387979", weight: 1, opacity: 1, fillOpacity: 0.8, className:"point" }).bindTooltip("Click for more info");
                 case "Food assistance site":
-                    return L.circleMarker(latlng, { radius: 8, fillColor: "#e699c2", color: "#a86b8f", weight: 1, opacity: 1, fillOpacity: 0.8 }).bindTooltip("Click for more info");
+                    return L.circleMarker(latlng, { radius: 8, fillColor: "#e699c2", color: "#a86b8f", weight: 1, opacity: 1, fillOpacity: 0.8, className:"point"  }).bindTooltip("Click for more info");
                 case "Business/Organization":
-                    return L.circleMarker(latlng, { radius: 8, fillColor: "#9463a8", color: "#6b437d", weight: 1, opacity: 1, fillOpacity: 0.8 }).bindTooltip("Click for more info");
+                    return L.circleMarker(latlng, { radius: 8, fillColor: "#9463a8", color: "#6b437d", weight: 1, opacity: 1, fillOpacity: 0.8, className:"point"  }).bindTooltip("Click for more info");
                 case "Restaurant/Bakery":
-                    return L.circleMarker(latlng, { radius: 8, fillColor: "#f9f07d", color: "#a29c5f", weight: 1, opacity: 1, fillOpacity: 0.8 }).bindTooltip("Click for more info");
+                    return L.circleMarker(latlng, { radius: 8, fillColor: "#f9f07d", color: "#a29c5f", weight: 1, opacity: 1, fillOpacity: 0.8, className:"point"  }).bindTooltip("Click for more info");
                 case "Retail":
-                    return L.circleMarker(latlng, { radius: 8, fillColor: "#78bbdd", color: "#6186a0", weight: 1, opacity: 1, fillOpacity: 0.8 }).bindTooltip("Click for more info");
+                    return L.circleMarker(latlng, { radius: 8, fillColor: "#78bbdd", color: "#6186a0", weight: 1, opacity: 1, fillOpacity: 0.8, className:"point"  }).bindTooltip("Click for more info");
                 case "School district nutrition program":
-                    return L.circleMarker(latlng, { radius: 8, fillColor: "#f47f72", color: "#b55e55", weight: 1, opacity: 1, fillOpacity: 0.8 }).bindTooltip("Click for more info");
+                    return L.circleMarker(latlng, { radius: 8, fillColor: "#f47f72", color: "#b55e55", weight: 1, opacity: 1, fillOpacity: 0.8, className:"point"  }).bindTooltip("Click for more info");
                 case "Shelters":
-                    return L.circleMarker(latlng, { radius: 8, fillColor: "#111111", color: "#000", weight: 1, opacity: 1, fillOpacity: 0.8 }).bindTooltip("Click for more info");
+                    return L.circleMarker(latlng, { radius: 8, fillColor: "#111111", color: "#000", weight: 1, opacity: 1, fillOpacity: 0.8, className:"point"  }).bindTooltip("Click for more info");
             }
         },
 
@@ -534,5 +531,5 @@ function getData() {
             currentLayer = addMarkerProperties(filterLayers['all']).addTo(map);
         })
 };
-
+document.querySelector("body").addEventListener("click", function(e){})
 document.addEventListener('DOMContentLoaded', createMap)
